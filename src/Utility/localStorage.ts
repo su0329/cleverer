@@ -9,6 +9,30 @@ interface ActionResult {
 class LocalStorageHelper {
     private ITEM_KEY__USER_RATING = "user-ratings";
 
+    GetUserRating(){
+        const result: ActionResult = {
+            status: "OK"
+        }
+
+        try{
+            const existingRatings = localStorage.getItem(this.ITEM_KEY__USER_RATING);
+
+            if (!!!existingRatings){
+                return result;
+            }
+    
+            const parsedRatings = JSON.parse(existingRatings) as UserRating[];
+            
+            result.data = parsedRatings;
+            return result;
+        }catch(error){
+            console.error("failed to get User ratings - ", error);
+            result.status = "FAILED"
+            result.error = error
+            return result
+        }
+    }
+
     UpsertUserRating(userRating: UserRating){
         const result: ActionResult = {
             status: "OK"
@@ -19,7 +43,7 @@ class LocalStorageHelper {
 
             // if no existing ratings, do inserting directly
             if (!!!existingRatings){
-                localStorage.setItem(this.ITEM_KEY__USER_RATING, JSON.stringify([userRating]));
+                localStorage.setItem(this.ITEM_KEY__USER_RATING, JSON.stringify([{...userRating, id: 1}]));
                 return result;
             }
     
@@ -27,7 +51,7 @@ class LocalStorageHelper {
             const parsedRatings = JSON.parse(existingRatings) as UserRating[];
             
             // combine new rating to existing ratings
-            parsedRatings.push(userRating);
+            parsedRatings.push({...userRating, id: parsedRatings.length + 1});
 
             // update local storage
             localStorage.setItem(this.ITEM_KEY__USER_RATING, JSON.stringify(parsedRatings));

@@ -65,11 +65,14 @@ function StarRatingRadio({numberOfOptions: maxValue, selectedValue, setSelectVal
  * @property {starRating} required. min 1, max 5
  * @property {purpose} optional. Purpose of visiting.
  * @property {improvement} optional.
+ * TODO: collect user browser info
+ * TODO: collect user info
  */
 export interface UserRating {
+    id?: number
     starRating: number
-    purpose: string
-    improvement: string
+    purpose?: string
+    improvement?: string
 }
 
 export default function RatingWidget() {

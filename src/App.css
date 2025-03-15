@@ -19,7 +19,7 @@ button {
     font-weight: 900;
 }
 
-.subtitle{
+.subtitle, input, select, label, td, th{
     font-size: 18px;
     line-height: 1.2;
 }
