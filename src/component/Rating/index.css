@@ -1,4 +1,4 @@
-#rating-widget {
+.rating-widget {
     position: fixed;
     bottom: 5%;
     right: 5%;
@@ -10,11 +10,14 @@
     line-height: 1;
 }
 
-#rating-widget > #rating-widget-close-button{
+#rating-widget-minimized {
+    background-color: whitesmoke;
+    padding: 30px 20px;
+}
+
+.rating-widget > #rating-widget-close-button{
    height: 50px;
    aspect-ratio: 1;
-   outline: none;
-   border: none;
    border-radius: 3px;
    background-color: rgba(238, 235, 235, 0.839);
 }

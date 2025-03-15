@@ -28,7 +28,7 @@ interface RatingRadioOptionProps {
 const RatingRadioOption = React.memo(function RatingRadioOption({value, isCheck, onClick}: RatingRadioOptionProps) {
     return (
         <>
-            <input type="radio" className="rating-radio" id={`rating-radio${value}`} value={value} checked={isCheck}/>
+            <input type="radio" className="rating-radio" readOnly id={`rating-radio${value}`} value={value} checked={isCheck}/>
             <label htmlFor={`rating-radio${value}`} onClick={onClick} >
                 <StarIcon />
             </label>
@@ -59,7 +59,7 @@ function StarRatingRadio({numberOfOptions: maxValue, selectedValue, setSelectVal
 
         for (let i=maxValue; i>0; i--) {
             otps.push(
-                <RatingRadioOption value={i} isCheck={selectedValue >= i} onClick={()=>onRadioOptionClick(i)}/>
+                <RatingRadioOption key={i} value={i} isCheck={selectedValue >= i} onClick={()=>onRadioOptionClick(i)}/>
             )
         }
 
@@ -80,15 +80,13 @@ export default function RatingWidget() {
     const [improvement, setImprovement] = React.useState("");
 
     if (minimized) {
-        <div className="rating-widget" id="rating-widget-minimized">
-            <button onClick={() => setMinimized(false)}>Give a Feedback?</button>
-        </div>
+        return (<button className="rating-widget" id="rating-widget-minimized" onClick={() => setMinimized(false)}>Give a Feedback?</button>)
     }
 
     return (
         <div className="rating-widget" id="rating-widget">
 
-            <button className="form-action-close" id="rating-widget-close-button" onClick={()=> setMinimized(true)}>
+            <button className="form-action-close" id="rating-widget-close-button" onClick={()=>{console.log("clicked"); setMinimized(true)}}>
                 <CloseIcon/>
             </button>
 
