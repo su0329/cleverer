@@ -10,6 +10,15 @@
     line-height: 1;
 }
 
+#rating-widget > #rating-widget-close-button{
+   height: 50px;
+   aspect-ratio: 1;
+   outline: none;
+   border: none;
+   border-radius: 3px;
+   background-color: rgba(238, 235, 235, 0.839);
+}
+
 .star-rating-radios {
     display: flex;
     flex-direction: row-reverse;
@@ -43,12 +52,14 @@
     height: 100%;
 }
 
+/** user select effects, color changes based on user's rating */
 .star-rating-radios > input[type='radio']:checked + label > svg {
     fill: gold;
     stroke: yellow;
 }
 
-label:hover > svg,label:hover ~ label > svg{
+/** hover effects, color changes to hovered one and all stars before*/
+.star-rating-radios > label:hover > svg, .star-rating-radios > label:hover ~ label > svg{
     fill: gold;
     stroke: yellow;
 }
