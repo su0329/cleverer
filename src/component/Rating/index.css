@@ -1,0 +1,54 @@
+#rating-widget {
+    position: fixed;
+    bottom: 5%;
+    right: 5%;
+    padding: 60px 40px;
+    box-shadow: 0 10px 24px 0 rgba(54, 61, 77, 0.15);
+    font-family: Sora, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    max-width: 40%;
+    font-size: 18px;
+    line-height: 1;
+}
+
+.star-rating-radios {
+    display: flex;
+    flex-direction: row-reverse;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+}
+
+.star-rating-radios > input[type='radio'] {
+    margin: 0;
+    opacity: 0;
+    display: none;
+    cursor: pointer;
+    position: absolute;
+}
+
+.star-rating-radios > label {
+    width: 38px;
+    height: 32px;
+    padding: 0 8px 0 2px;
+    display: block;
+    margin: 0;
+}
+
+.star-rating-radios > label > svg {
+    fill: transparent;
+    color: black;
+    stroke: black;
+    stroke-opacity: 0.3;
+    stroke-width: 3;
+    width: 100%;
+    height: 100%;
+}
+
+.star-rating-radios > input[type='radio']:checked + label > svg {
+    fill: gold;
+    stroke: yellow;
+}
+
+label:hover > svg,label:hover ~ label > svg{
+    fill: gold;
+    stroke: yellow;
+}
