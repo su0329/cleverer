@@ -1,4 +1,6 @@
 .rating-widget {
+    opacity: 0; /* param for fade-in animation */
+    animation: fadeIn 1s forwards; /* fade-in animation onlayout */
     position: fixed;
     bottom: 5%;
     right: 5%;
@@ -8,6 +10,18 @@
     max-width: 40%;
     font-size: 18px;
     line-height: 1;
+    overflow-y: auto; /* make the form scrollable when form is too long */
+    max-height: 100vh; 
+}
+
+/* fadeIn animation */
+@keyframes fadeIn {
+    0% {
+      opacity: 0; /* Start fully transparent */
+    }
+    100% {
+      opacity: 1; /* End fully opaque */
+    }
 }
 
 #rating-widget-minimized {
@@ -16,10 +30,29 @@
 }
 
 .rating-widget > #rating-widget-close-button{
-   height: 50px;
+   height: 10vw;
+   max-height: 50px;
    aspect-ratio: 1;
    border-radius: 3px;
-   background-color: rgba(238, 235, 235, 0.839);
+   float: right;
+}
+
+.rating-widget > #rating-widget-close-button:hover{
+    background-color: lightgrey;
+}
+
+.rating-widget > #rating-widget-submit{
+    display: block;
+    margin-top: 5%;
+    width: 30%;
+    min-width: 60px !important;
+    max-width: 100px;
+    min-height: 30px;
+    aspect-ratio: 2.5;
+    background-color: black;
+    color: white;
+    font-weight: bold;
+    border-radius: 3px;
 }
 
 .star-rating-radios {

@@ -2,22 +2,9 @@ import React from "react";
 import "./index.css";
 import UnderscoredInput from "../UnderscoredInput";
 import UnderscoredTextArea from "../UnderscoredInput/UnderScoredTextArea";
+import { CloseIcon, StarIcon } from "../Icons";
+import { localStorageHelper } from "../../Utility/localStorage";
 
-const CloseIcon = React.memo(function CloseIcon() {
-    return (
-        <svg viewBox="0 0 50 50">
-            <path d="M 9.15625 6.3125 L 6.3125 9.15625 L 22.15625 25 L 6.21875 40.96875 L 9.03125 43.78125 L 25 27.84375 L 40.9375 43.78125 L 43.78125 40.9375 L 27.84375 25 L 43.6875 9.15625 L 40.84375 6.3125 L 25 22.15625 Z"></path>
-        </svg>
-    )
-})
-
-const StarIcon = React.memo(function StarIcon() {
-    return (
-        <svg viewBox="0 0 32 32">
-            <polygon points="16 23.369 6.333 30.5 10.2 19.09 1.5 12.434 12.133 12.434 16 1.5 19.867 12.434 30.5 12.434 21.8 19.09 25.667 30.5"></polygon>
-        </svg>
-    )
-})
 
 interface RatingRadioOptionProps {
     value: number
@@ -73,20 +60,80 @@ function StarRatingRadio({numberOfOptions: maxValue, selectedValue, setSelectVal
     )
 }
 
+/**
+ * UserRating is the information we collected from users, which consists of a rating rate 1-5, purpose of visiting, improvements
+ * @property {starRating} required. min 1, max 5
+ * @property {purpose} optional. Purpose of visiting.
+ * @property {improvement} optional.
+ */
+export interface UserRating {
+    starRating: number
+    purpose: string
+    improvement: string
+}
+
 export default function RatingWidget() {
-    const [minimized, setMinimized] = React.useState(false);
+    const [widgetStatus, setWidgetStatus] = React.useState<'minimized'|'opened'|'submitted'|'closed'>('opened');
     const [starRating, setStarRating] = React.useState(0);
     const [purpose, setPurpose] = React.useState("");
     const [improvement, setImprovement] = React.useState("");
 
-    if (minimized) {
-        return (<button className="rating-widget" id="rating-widget-minimized" onClick={() => setMinimized(false)}>Give a Feedback?</button>)
+    const onRatingSubmit = React.useCallback(() => {
+        // form validation, evaluate required field.
+        if (starRating === 0) {
+            alert("Please select a star rating.")
+            return;
+        }
+
+        const formData: UserRating = {
+            starRating: starRating,
+            purpose: purpose,
+            improvement: improvement
+        };
+
+        const {status} = localStorageHelper.UpsertUserRating(formData);
+        if (status !== "OK") {
+            alert("There was an error while saving your feedback, please try again.")
+            return;
+        }
+
+        // on success
+        setWidgetStatus('submitted');
+        setTimeout(() => {
+            setWidgetStatus('closed');
+        }, 5000);
+    }, [starRating, purpose, improvement])
+
+    if (widgetStatus === 'closed') {
+        return null;
     }
 
+    if (widgetStatus==='minimized') {
+        return (<button className="rating-widget" id="rating-widget-minimized" onClick={() => setWidgetStatus('opened')}>Give a Feedback?</button>)
+    }
+
+    // todo: Show a dynamic counting down in text
+    if (widgetStatus === 'submitted'){
+        return (
+            <div className="rating-widget" id="rating-widget">
+
+                <button className="form-action-close" id="rating-widget-close-button" onClick={()=> setWidgetStatus('minimized')}>
+                    <CloseIcon/>
+                </button>
+
+                <h1 className="title">We received your feedback !</h1>
+                <p className="subtitle">Appreciate your time and support to help us building a better platform.</p>
+                
+                <p className="form-input-label">This modal will be closed in 5s</p>
+            </div>
+        )
+    }
+
+    // widgetStatus === 'opened'
     return (
         <div className="rating-widget" id="rating-widget">
 
-            <button className="form-action-close" id="rating-widget-close-button" onClick={()=>{console.log("clicked"); setMinimized(true)}}>
+            <button className="form-action-close" id="rating-widget-close-button" onClick={()=> setWidgetStatus('minimized')}>
                 <CloseIcon/>
             </button>
 
@@ -116,6 +163,8 @@ export default function RatingWidget() {
                 maxLength={200}
                 style={{width:"70%"}}
             />
+
+            <button id="rating-widget-submit" onClick={onRatingSubmit}>Submit</button>
         </div>
     )
 }

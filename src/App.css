@@ -10,7 +10,7 @@ textarea{
 button {
     outline: none;
     border: none;
-    background-color: none;
+    background-color: transparent;
 }
 
 .title{
