@@ -160,7 +160,7 @@ export function UserRatingList(){
 
                 <div className="table-tool">
                     <button onClick={decrementPageIndex}>{`<`}</button>
-                    <hr />
+                    
                     <button onClick={incrementPageIndex}>{`>`}</button>
                 </div>
             </div>
