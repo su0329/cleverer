@@ -3,7 +3,7 @@ import "./index.css";
 import UnderscoredInput from "../UnderscoredInput";
 import UnderscoredTextArea from "../UnderscoredInput/UnderScoredTextArea";
 import { CloseIcon, StarIcon } from "../Icons";
-import { localStorageHelper } from "../../Utility/localStorage";
+import { localStorageHelper } from "../../utility/localStorage";
 
 
 interface RatingRadioOptionProps {
@@ -28,8 +28,13 @@ interface StarRatingRadioProps {
     selectedValue: number
     setSelectValue: Function
 }
-
-function StarRatingRadio({numberOfOptions: maxValue, selectedValue, setSelectValue}: StarRatingRadioProps) {
+/** StarRatingRadio is a star icon radio input.
+* @property {number} numberOfOptions specify the number of star options will be rendered.
+* @property {number} selectedValue current value of the radio.
+* @property {Function} setSelectValue set function of the value of the radio.
+*/
+function StarRatingRadio({numberOfOptions, selectedValue, setSelectValue}: StarRatingRadioProps) {
+    
     const onRadioOptionClick = React.useCallback((value: number) => {
         if (selectedValue !== value){
             // allow users to select a rating
@@ -44,14 +49,14 @@ function StarRatingRadio({numberOfOptions: maxValue, selectedValue, setSelectVal
     const options = React.useMemo(() => {
         let otps: React.JSX.Element[] = [];
 
-        for (let i=maxValue; i>0; i--) {
+        for (let i=numberOfOptions; i>0; i--) {
             otps.push(
                 <RatingRadioOption key={i} value={i} isCheck={selectedValue >= i} onClick={()=>onRadioOptionClick(i)}/>
             )
         }
 
         return otps;
-    }, [maxValue, selectedValue, onRadioOptionClick])
+    }, [numberOfOptions, selectedValue, onRadioOptionClick])
 
     return (
         <div className="star-rating-radios">
@@ -62,9 +67,10 @@ function StarRatingRadio({numberOfOptions: maxValue, selectedValue, setSelectVal
 
 /**
  * UserRating is the information we collected from users, which consists of a rating rate 1-5, purpose of visiting, improvements
- * @property {starRating} required. min 1, max 5
- * @property {purpose} optional. Purpose of visiting.
- * @property {improvement} optional.
+ * @property {number} id id of recorded user rating. In this demo, ID will be assigned when saving into localStorage.
+ * @property {number} starRating required. min 1, max 5
+ * @property {string} purpose optional. Purpose of visiting.
+ * @property {string} improvement optional.
  * TODO: collect user browser info
  * TODO: collect user info
  */
@@ -75,6 +81,11 @@ export interface UserRating {
     improvement?: string
 }
 
+/**
+ * RatingWidget is a fixed position widget which can collect user's feedback.
+ * TODO: collect user browser info.
+ * TODO: collect user info.
+ */
 export default function RatingWidget() {
     const [widgetStatus, setWidgetStatus] = React.useState<'minimized'|'opened'|'submitted'|'closed'>('opened');
     const [starRating, setStarRating] = React.useState(0);

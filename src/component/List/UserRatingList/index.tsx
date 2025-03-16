@@ -1,14 +1,19 @@
 import React from "react";
-import { localStorageHelper } from "../../../Utility/localStorage";
+import { localStorageHelper } from "../../../utility/localStorage";
 import { UserRating } from "../../Rating";
 import "./index.css";
 
+/** SortByOption defines the supported sorting options for User rating list */
+type SortByOption = 'starRating asc' | 'starRating desc' | 'id acs' | 'id desc'
+
+/** UserRatingList is simply List UI to display all  user ratings record in local storage. Supporting pagination and sorting. */
 export function UserRatingList(){
     const [pageIndex, setPageIndex] = React.useState(1);
     const [pageIndexInput, setPageIndexInput] = React.useState(pageIndex);
     const [pagination, setPagination] = React.useState<number>(10);
-    const [sortby, setSortBy] = React.useState<'starRating asc' | 'starRating desc' | 'id acs' | 'id desc'>('id acs')
+    const [sortby, setSortBy] = React.useState<SortByOption>('id acs'); // TODO: implement sorting 
     
+    // sort and paginate data based on List config
     const paginatedData = React.useMemo(() => {
         let {data} = localStorageHelper.GetUserRating();
 
@@ -40,13 +45,16 @@ export function UserRatingList(){
         return paginatedData;
     }, [pagination, sortby]);
 
-    const goToPage = () => {
+    // jump to a specified page
+    const goToPage = React.useCallback(() => {
+        // page index should no less than 1
         if (pageIndexInput <= 1){
             setPageIndex(1);
             setPageIndexInput(1);
             return;
         }
 
+        // page index should no more than total data slices
         if (pageIndexInput > paginatedData.length){
             setPageIndex(paginatedData.length);
             setPageIndexInput(paginatedData.length);
@@ -55,51 +63,83 @@ export function UserRatingList(){
 
         setPageIndex(pageIndexInput);
         setPageIndexInput(pageIndexInput);
-    };
+    }, [pageIndexInput, paginatedData]);
 
-    const incrementPageIndex = () => {
+    // go to next page
+    const incrementPageIndex = React.useCallback(() => {
         if (pageIndex === paginatedData.length){
             return;
         }
 
-
         setPageIndex(index => ++index);
         setPageIndexInput(index => ++index)
-    };
+    }, [pageIndex, pageIndexInput, paginatedData]);
 
-    const decrementPageIndex = () => {
+    // go to previous page
+    const decrementPageIndex = React.useCallback(() => {
         if (pageIndex === 1){
             return;
         }
 
         setPageIndex(index => --index);
         setPageIndexInput(index => --index);
-    };
+    }, [pageIndex, pageIndexInput, paginatedData]);
 
+    // early stop, list empty component
     if (!!!paginatedData || paginatedData.length === 0) {
         return <div>No data to display</div>
     }
 
+    // table headers
     const headers = ['ID', 'Rating', 'Purpose of Visiting', 'Improvement'];
+
+    // render table header row cells
+    const TableHeaderRow = () => {
+        return headers.map(
+            (header, i) => {
+                switch(header){
+                    case 'ID':
+                        return <th key={`header ${i}`}>
+                            <select value={sortby} onChange={(event) => setSortBy(event.target.value as SortByOption)}>
+                                <option value="id acs">ID acs</option>
+                                <option value="id desc">ID desc</option>
+                            </select>
+                        </th>
+                    case 'Rating':
+                        return <th key={`header ${i}`}>
+                        <select value={sortby} onChange={(event) => setSortBy(event.target.value as SortByOption)}>
+                            <option value="starRating asc">Rating acs</option>
+                            <option value="starRating desc">Rating desc</option>
+                        </select>
+                    </th>
+                    default:
+                        return <th key={`header ${i}`}>{header}</th>
+                }
+            }
+    )};
+
+    // render table body data rows
+    const TableBodyRows = () => {
+        return paginatedData[pageIndex-1].map((value, i) => (
+            <tr key={`user rating ${i}`}>
+                <td>{value.id}</td>
+                <td>{value.starRating}</td>
+                <td>{value.purpose}</td>
+                <td>{value.improvement}</td>
+            </tr>)
+        )
+    }
 
     return (
         <div>
             <table>
                 <thead>
                     <tr>
-                        {headers.map((header, i) => <th key={`header ${i}`}>{header}</th>)}
+                        <TableHeaderRow />
                     </tr>
                 </thead>
                 <tbody>
-                    {
-                    paginatedData[pageIndex-1].map((value, i) => (
-                        <tr key={`user rating ${i}`}>
-                            <td>{value.id}</td>
-                            <td>{value.starRating}</td>
-                            <td>{value.purpose}</td>
-                            <td>{value.improvement}</td>
-                        </tr>))
-                    }
+                    <TableBodyRows />
                 </tbody>
             </table>
             <div className="table-tool-container">
